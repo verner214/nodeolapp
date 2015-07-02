@@ -2,7 +2,7 @@
   webbserver som till�ter uppladdning av filer till azure storage
   dessa environment variabler m�ste s�ttas innan servern startas:
 set AZURE_STORAGE_ACCOUNT=portalvhdsgfh152bhy290k
-set AZURE_STORAGE_ACCESS_KEY=[key from azure]
+set AZURE_STORAGE_ACCESS_KEY=[key from azure] ---se appsettings.bat, checkas inte in i git
   
 obs! bra l�nk som �r r�tt och inte fel!, http://azure.microsoft.com/sv-se/develop/nodejs/
 obs! om hur man laddar upp och skapar fil innan, http://stackoverflow.com/questions/18317904/stream-uploaded-file-to-azure-blob-storage-with-node
@@ -14,13 +14,12 @@ var bodyParser = require('body-parser'); //connects bodyParsing middleware
 var formidable = require('formidable');
 var path = require('path');     //used for file path
 var fs = require('fs-extra');    //File System-needed for renaming file etc
-var tufu = require("./tufuOwn");//g�r thumbnails
 var uuid = require('node-uuid');
 var async = require("async");
 
 var app = express();
-var containerName = "photos";
-var tableName = "photos";
+var containerName = "cntolapp";
+var tableName = "tblolapp";
 var AZURE_STORAGE_ACCOUNT = "portalvhdsgfh152bhy290k";
 var AZURE_STORAGE_ACCESS_KEY = process.env.AZURE_STORAGE_ACCESS_KEY;
 var hostName = "https://" + AZURE_STORAGE_ACCOUNT + ".blob.core.windows.net";
@@ -224,8 +223,8 @@ app.post('/formhandler', function (req, res, next) {
 
 app.get('/sas', function (req, res) {
 	var startDate = new Date();
-	var expiryDate = new Date(startDate);
-	expiryDate.setMinutes(startDate.getMinutes() + 1000000);
+	var expiryDate = new Date(startDate);//Code klagar, testa att skriva om denna rad efter test att det fungerar som det är
+	expiryDate.setMinutes(startDate.getMinutes() + 1000000);//obs! öka gärna en nolla här!
 	startDate.setMinutes(startDate.getMinutes() - 100);
 
 	var sharedAccessPolicy = {
