@@ -1,0 +1,157 @@
+﻿<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <link rel="stylesheet" href="own.css" type="text/css">
+    <meta charset="utf-8" />
+    <title></title>
+</head>
+<body>
+    <form id="delform" action="/delete" method="post" enctype="multipart/form-data">
+        <input id="formRowKey" type="text" name="rowkey" />
+        <input id="formPartitionKey" type="text" name="partitionkey" />
+    </form>
+
+    <a href="new.html">ladda upp ny fil.</a><br />
+    <a href="list.html?hidehidden=true">only show-checked</a><br />
+    <a href="list.html">show all</a><br />
+    <script src="jquery-1.11.2.js"></script>
+    <script type="text/javascript">
+        //globala variabler, minimera till en
+        var myGlobalObject = {
+            JSONFromServer: { "value": [{ "PartitionKey": "hometasks", "RowKey": "0", "Timestamp": "2015-03-23T21:47:34.3221026Z", "description": "take out the trash", "dueDate": "2015-07-20T00:00:00Z" }, { "PartitionKey": "photos", "RowKey": "079d9bce-8542-42ee-bb55-644eeed26e78", "Timestamp": "2015-03-24T21:42:57.0755037Z", "description": "take out the trash", "imgURL": "https://portalvhdsgfh152bhy290k.blob.core.windows.net/photos/IMG_1003.JPG", "thumbURL": "https://portalvhdsgfh152bhy290k.blob.core.windows.net/photos/t_IMG_1003.JPG" }, { "PartitionKey": "photos", "RowKey": "0fae2d59-0b98-470b-b3ee-c60f15c9416a", "Timestamp": "2015-03-24T18:19:18.3864847Z", "description": "take out the trash", "imgURL": "https://portalvhdsgfh152bhy290k.blob.core.windows.net/photos/IMG_1002.JPG", "thumbURL": "https://portalvhdsgfh152bhy290k.blob.core.windows.net/photos/t_IMG_1002.JPG" }, { "PartitionKey": "photos", "RowKey": "17833bfc-53dd-4f3d-bec0-8258b958ddc7", "Timestamp": "2015-03-24T21:46:48.8136665Z", "description": "take out the trash", "imgURL": "https://portalvhdsgfh152bhy290k.blob.core.windows.net/photos/image.jpg", "thumbURL": "https://portalvhdsgfh152bhy290k.blob.core.windows.net/photos/t_image.jpg" }, { "PartitionKey": "photos", "RowKey": "1982fdeb-3440-40f6-91c2-71ef25a4cc71", "Timestamp": "2015-03-24T18:05:11.007506Z", "description": "take out the trash", "imgURL": "https://portalvhdsgfh152bhy290k.blob.core.windows.net/photos/image.jpg", "thumbURL": "https://portalvhdsgfh152bhy290k.blob.core.windows.net/photos/t_image.jpg" }, { "PartitionKey": "photos", "RowKey": "28cff47e-d83a-41c5-a56b-0fa75e63019e", "Timestamp": "2015-03-24T18:01:51.3414877Z", "description": "take out the trash", "imgURL": "https://portalvhdsgfh152bhy290k.blob.core.windows.net/photos/image.jpg", "thumbURL": "https://portalvhdsgfh152bhy290k.blob.core.windows.net/photos/t_image.jpg" }, { "PartitionKey": "photos", "RowKey": "29ecde1f-253a-4ad4-b0a6-6a93b1126091", "Timestamp": "2015-03-24T18:21:28.9838084Z", "description": "take out the trash", "imgURL": "https://portalvhdsgfh152bhy290k.blob.core.windows.net/photos/IMG_1003.JPG", "thumbURL": "https://portalvhdsgfh152bhy290k.blob.core.windows.net/photos/t_IMG_1003.JPG" }, { "PartitionKey": "photos", "RowKey": "384f8646-eeac-400e-a81e-509935daea83", "Timestamp": "2015-03-24T19:14:38.9634436Z", "description": "take out the trash", "imgURL": "https://portalvhdsgfh152bhy290k.blob.core.windows.net/photos/IMAG2139.jpg", "thumbURL": "https://portalvhdsgfh152bhy290k.blob.core.windows.net/photos/t_IMAG2139.jpg" }, { "PartitionKey": "photos", "RowKey": "3ef491e1-13fc-40be-b7f9-9d5f0110c82b", "Timestamp": "2015-03-24T18:23:47.5067748Z", "description": "take out the trash", "imgURL": "https://portalvhdsgfh152bhy290k.blob.core.windows.net/photos/IMG_1004.JPG", "thumbURL": "https://portalvhdsgfh152bhy290k.blob.core.windows.net/photos/t_IMG_1004.JPG" }, { "PartitionKey": "photos", "RowKey": "4ca36fb6-7845-4b86-bbb6-efa47db97dcc", "Timestamp": "2015-03-24T12:39:47.0808704Z", "description": "take out the trash", "imgURL": "https://portalvhdsgfh152bhy290k.blob.core.windows.net/photos/ytest40.jpg", "thumbURL": "https://portalvhdsgfh152bhy290k.blob.core.windows.net/photos/t_ytest40.jpg" }, { "PartitionKey": "photos", "RowKey": "4f38da7c-93d6-467b-a836-dfd072efac89", "Timestamp": "2015-03-24T09:18:17.4789718Z", "description": "take out the trash", "imgURL": "https://portalvhdsgfh152bhy290k.blob.core.windows.net/photos/skiss2.jpg", "thumbURL": "urlThumbnail" }, { "PartitionKey": "photos", "RowKey": "512d85b9-9511-4ea0-87c3-6e17d9b28012", "Timestamp": "2015-03-24T13:34:58.4306836Z", "description": "take out the trash", "imgURL": "https://portalvhdsgfh152bhy290k.blob.core.windows.net/photos/Bild%20-5.jpg", "thumbURL": "https://portalvhdsgfh152bhy290k.blob.core.windows.net/photos/t_Bild%20-5.jpg" }, { "PartitionKey": "photos", "RowKey": "5d473ac0-44b9-4035-9aad-55fa52bee4cd", "Timestamp": "2015-03-24T13:33:33.6853528Z", "description": "take out the trash", "imgURL": "https://portalvhdsgfh152bhy290k.blob.core.windows.net/photos/Bild%20-3.jpg", "thumbURL": "https://portalvhdsgfh152bhy290k.blob.core.windows.net/photos/t_Bild%20-3.jpg" }, { "PartitionKey": "photos", "RowKey": "6332b1ed-a425-41fa-bff8-7a28d3a51472", "Timestamp": "2015-03-24T13:12:35.0332047Z", "description": "take out the trash", "imgURL": "https://portalvhdsgfh152bhy290k.blob.core.windows.net/photos/landscape2.jpg", "thumbURL": "https://portalvhdsgfh152bhy290k.blob.core.windows.net/photos/t_landscape2.jpg" }, { "PartitionKey": "photos", "RowKey": "6ae1c11f-9b4b-4e4e-bbf1-ba6459c0a507", "Timestamp": "2015-03-24T21:47:37.7502034Z", "description": "take out the trash", "imgURL": "https://portalvhdsgfh152bhy290k.blob.core.windows.net/photos/image.jpg", "thumbURL": "https://portalvhdsgfh152bhy290k.blob.core.windows.net/photos/t_image.jpg" }, { "PartitionKey": "photos", "RowKey": "70346f76-fcf3-4959-8a54-3640bce1a398", "Timestamp": "2015-03-24T21:47:11.7551504Z", "description": "take out the trash", "imgURL": "https://portalvhdsgfh152bhy290k.blob.core.windows.net/photos/IMAG2122.jpg", "thumbURL": "https://portalvhdsgfh152bhy290k.blob.core.windows.net/photos/t_IMAG2122.jpg" }, { "PartitionKey": "photos", "RowKey": "725e3a5e-ce50-4381-9fdd-c01e0c9e7fc3", "Timestamp": "2015-03-24T19:20:06.2671041Z", "description": "take out the trash", "imgURL": "https://portalvhdsgfh152bhy290k.blob.core.windows.net/photos/IMAG2386.jpg", "thumbURL": "https://portalvhdsgfh152bhy290k.blob.core.windows.net/photos/t_IMAG2386.jpg" }, { "PartitionKey": "photos", "RowKey": "800558e9-cc72-4cf1-bbe0-0b099a93c7b1", "Timestamp": "2015-03-24T13:29:07.6312487Z", "description": "take out the trash", "imgURL": "https://portalvhdsgfh152bhy290k.blob.core.windows.net/photos/image.jpg", "thumbURL": "https://portalvhdsgfh152bhy290k.blob.core.windows.net/photos/t_image.jpg" }, { "PartitionKey": "photos", "RowKey": "8a2e9ec2-b6a9-46af-9bde-e980b5044fab", "Timestamp": "2015-03-24T19:14:32.369005Z", "description": "take out the trash", "imgURL": "https://portalvhdsgfh152bhy290k.blob.core.windows.net/photos/IMAG2133.jpg", "thumbURL": "https://portalvhdsgfh152bhy290k.blob.core.windows.net/photos/t_IMAG2133.jpg" }, { "PartitionKey": "photos", "RowKey": "8ea1a4e5-800b-4a43-882e-f909449cdca1", "Timestamp": "2015-03-24T19:18:00.7368529Z", "description": "take out the trash", "imgURL": "https://portalvhdsgfh152bhy290k.blob.core.windows.net/photos/IMAG2383.jpg", "thumbURL": "https://portalvhdsgfh152bhy290k.blob.core.windows.net/photos/t_IMAG2383.jpg" }, { "PartitionKey": "photos", "RowKey": "91717c50-eaef-4e7f-b062-f64b91139c7a", "Timestamp": "2015-03-24T13:12:16.1394808Z", "description": "take out the trash", "imgURL": "https://portalvhdsgfh152bhy290k.blob.core.windows.net/photos/landscape2.jpg", "thumbURL": "https://portalvhdsgfh152bhy290k.blob.core.windows.net/photos/t_landscape2.jpg" }, { "PartitionKey": "photos", "RowKey": "9776d301-bdbe-4585-9f96-75cb9b1ac7cb", "Timestamp": "2015-03-24T19:13:25.3539564Z", "description": "take out the trash", "imgURL": "https://portalvhdsgfh152bhy290k.blob.core.windows.net/photos/IMAG2092.jpg", "thumbURL": "https://portalvhdsgfh152bhy290k.blob.core.windows.net/photos/t_IMAG2092.jpg" }, { "PartitionKey": "photos", "RowKey": "98afa27c-1ff4-450f-9e17-cb3ac4336409", "Timestamp": "2015-03-24T21:44:17.9277191Z", "description": "take out the trash", "imgURL": "https://portalvhdsgfh152bhy290k.blob.core.windows.net/photos/IMG_1004.JPG", "thumbURL": "https://portalvhdsgfh152bhy290k.blob.core.windows.net/photos/t_IMG_1004.JPG" }, { "PartitionKey": "photos", "RowKey": "a9ac306a-f34d-40b6-abae-33bc9c4bd3df", "Timestamp": "2015-03-24T21:41:28.2522456Z", "description": "take out the trash", "imgURL": "https://portalvhdsgfh152bhy290k.blob.core.windows.net/photos/IMG_1002.JPG", "thumbURL": "https://portalvhdsgfh152bhy290k.blob.core.windows.net/photos/t_IMG_1002.JPG" }, { "PartitionKey": "photos", "RowKey": "af70eb38-9fe1-4ede-add5-66c4200fee26", "Timestamp": "2015-03-24T21:40:01.2416755Z", "description": "take out the trash", "imgURL": "https://portalvhdsgfh152bhy290k.blob.core.windows.net/photos/IMG_1001.JPG", "thumbURL": "https://portalvhdsgfh152bhy290k.blob.core.windows.net/photos/t_IMG_1001.JPG" }, { "PartitionKey": "photos", "RowKey": "b11344f0-3ee5-48ec-8ab1-57789cc6441b", "Timestamp": "2015-03-24T13:13:11.6855608Z", "description": "take out the trash", "imgURL": "https://portalvhdsgfh152bhy290k.blob.core.windows.net/photos/landscape1.jpg", "thumbURL": "https://portalvhdsgfh152bhy290k.blob.core.windows.net/photos/t_landscape1.jpg" }, { "PartitionKey": "photos", "RowKey": "b39f918b-3727-499c-a5df-13e400a91f22", "Timestamp": "2015-03-24T17:58:40.0975855Z", "description": "take out the trash", "imgURL": "https://portalvhdsgfh152bhy290k.blob.core.windows.net/photos/image.jpg", "thumbURL": "https://portalvhdsgfh152bhy290k.blob.core.windows.net/photos/t_image.jpg" }, { "PartitionKey": "photos", "RowKey": "b49abebd-d439-4d29-9e2b-5b980754ee29", "Timestamp": "2015-03-24T12:39:19.3981304Z", "description": "take out the trash", "imgURL": "https://portalvhdsgfh152bhy290k.blob.core.windows.net/photos/population-of-brazil-2014.jpg", "thumbURL": "https://portalvhdsgfh152bhy290k.blob.core.windows.net/photos/t_population-of-brazil-2014.jpg" }, { "PartitionKey": "photos", "RowKey": "b63acdc1-d371-4d53-a9c0-96bba0f9395d", "Timestamp": "2015-03-24T08:57:21.3497583Z", "description": "take out the trash", "dueDate": "2015-07-20T00:00:00Z" }, { "PartitionKey": "photos", "RowKey": "c4bda8ba-9fda-4ef9-9d6a-1fd85e076185", "Timestamp": "2015-03-24T19:16:56.1244955Z", "description": "take out the trash", "imgURL": "https://portalvhdsgfh152bhy290k.blob.core.windows.net/photos/IMAG2372.jpg", "thumbURL": "https://portalvhdsgfh152bhy290k.blob.core.windows.net/photos/t_IMAG2372.jpg" }, { "PartitionKey": "photos", "RowKey": "db882885-06ef-4538-a9b6-8288f2b95d33", "Timestamp": "2015-03-24T21:46:09.9199014Z", "description": "take out the trash", "imgURL": "https://portalvhdsgfh152bhy290k.blob.core.windows.net/photos/IMAG2092.jpg", "thumbURL": "https://portalvhdsgfh152bhy290k.blob.core.windows.net/photos/t_IMAG2092.jpg" }, { "PartitionKey": "photos", "RowKey": "e08765b8-d34b-479d-9672-5403e67907a9", "Timestamp": "2015-03-24T20:15:34.3542967Z", "description": "take out the trash", "imgURL": "https://portalvhdsgfh152bhy290k.blob.core.windows.net/photos/IMG_1007.JPG", "thumbURL": "https://portalvhdsgfh152bhy290k.blob.core.windows.net/photos/t_IMG_1007.JPG" }, { "PartitionKey": "photos", "RowKey": "ef78bd1c-ff69-4066-b549-1af1ede2c1b7", "Timestamp": "2015-03-24T12:36:53.7877374Z", "description": "take out the trash", "imgURL": "https://portalvhdsgfh152bhy290k.blob.core.windows.net/photos/skiss1.jpg", "thumbURL": "https://portalvhdsgfh152bhy290k.blob.core.windows.net/photos/t_skiss1.jpg" }, { "PartitionKey": "photos", "RowKey": "f1f5bd3f-0cb0-49d7-8e1b-b508736cc23e", "Timestamp": "2015-03-24T08:53:54.6945627Z", "description": "take out the trash", "dueDate": "2015-07-20T00:00:00Z" }, { "PartitionKey": "photos", "RowKey": "f8ac63a9-504e-4d43-889c-d21ecfe95616", "Timestamp": "2015-03-24T18:17:46.7797703Z", "description": "take out the trash", "imgURL": "https://portalvhdsgfh152bhy290k.blob.core.windows.net/photos/IMG_1001.JPG", "thumbURL": "https://portalvhdsgfh152bhy290k.blob.core.windows.net/photos/t_IMG_1001.JPG" }, { "PartitionKey": "photos", "RowKey": "fd54aac6-ad47-41aa-808a-8c25a30aa843", "Timestamp": "2015-03-24T12:38:48.4068487Z", "description": "take out the trash", "imgURL": "https://portalvhdsgfh152bhy290k.blob.core.windows.net/photos/_R2N5452_200x150.jpg", "thumbURL": "https://portalvhdsgfh152bhy290k.blob.core.windows.net/photos/t__R2N5452_200x150.jpg" }] },
+            currentIndex: -1
+        };
+
+        function getParameterByName(name) {
+            name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
+            var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
+                results = regex.exec(location.search);
+            return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
+        }
+        /*
+        $('form#myForm').submit();
+
+        $('#myForm').submit(function () {
+            alert('Handler for .submit() called.');
+            return false;
+        });
+        */
+        var delEntry = function (index) {
+            //alert("delete = " + index);
+            var delCntNr = document.getElementById("delcnt" + index);
+            //alert(delCntNr.innerHTML);
+            delCntNr.innerHTML = delCntNr.innerHTML === "" ? "1" : parseInt(delCntNr.innerHTML) + 1;
+
+//radera efter 10 klick!
+            if (delCntNr.innerHTML === "10") {
+                delCntNr.innerHTML = "";
+                var rowkey = document.getElementById("formRowKey");
+                rowkey.value = myGlobalObject.JSONFromServer.value[index].RowKey;
+                var partitionkey = document.getElementById("formPartitionKey");
+                partitionkey.value = myGlobalObject.JSONFromServer.value[index].PartitionKey;
+                $('#delform').submit();
+            }
+        }
+
+        var fetchPhotoList = function (filter) {
+            $.support.cors = true;
+            //signaturdelen (st=2015 fram till slutet) är skapat mha att gå till adressen /sas. koden finns i server.js.
+            //jQuery.support.cors = true;
+            $.ajax({//tableSAS:st=2015-03-29T18%3A35%3A25Z&se=2015-04-05T18%3A55%3A25Z&sp=r&sv=2014-02-14&tn=photos&sig=7t9DkALrw9QLsG4B%2BPUFodyDJHFCpvbwZsEfYoSuHpI%3D
+                url: "https://portalvhdsgfh152bhy290k.table.core.windows.net/photos?" + filter + "st=2015-04-02T09%3A13%3A00Z&se=2017-02-24T21%3A33%3A00Z&sp=r&sv=2014-02-14&tn=photos&sig=f8Eo%2FmE3SxQE1TstvG5memvKfmTxyMszMTOa27AQ0WQ%3D",
+                type: 'GET',
+                success: function (data) {
+					$("#ul_debug").append("<span>success</span><br>");
+                    myGlobalObject.JSONFromServer = data;
+                    data = data.value;
+                    //alert(JSON.stringify(data));
+
+                    for (var i = 0; i < data.length; i++) {
+                        if (data[i].thumbURL) {
+                            $("#ulJSON").append("<li><a href='edit.html?RowKey=" + data[i].RowKey + "&PartitionKey=" + data[i].PartitionKey + "'>" +
+                                "<img id='imgid" + i + "' src='" + data[i].thumbURL + "'/></a><span> " + data[i].description +
+                                "</span><img src='trash.jpg' onclick='delEntry(" + i + ");' /><span id='delcnt" + i + "'></span></li>");
+                        }
+                    }
+
+                },
+                beforeSend: function (xhr) {
+					$("#ul_debug").append("<span>beforeSend</span><br>");
+                    //alert("beforeSend");
+                    //xhr.setRequestHeader('Authorization', "SharedKey " + accountName + ":" + signature);
+                    //xhr.setRequestHeader('x-ms-date', dateInUTC);
+                    //xhr.setRequestHeader('x-ms-version', '2014-02-14');
+                    xhr.setRequestHeader('Accept', 'application/json;odata=nometadata');
+                    //xhr.setRequestHeader('DataServiceVersion', '3.0;NetFx');
+                    //xhr.setRequestHeader('MaxDataServiceVersion', '3.0;NetFx');
+                },
+                error: function (rcvData) {
+                    alert(JSON.stringify(rcvData));
+                    console.log(rcvData);
+                }
+            });
+        };
+        /*
+        var fetchPhotoList2 = function () {
+            var data = myGlobalObject.JSONFromServer.value;
+            alert('test');
+            alert(data.length);
+
+            for (var i = 0; i < data.length; i++) {
+                if (data[i].thumbURL) {
+                    $("#ulJSON").append("<li><a name='" + data[i].RowKey + "' href='javascript:switchimg(" + i + ");'>" +
+                        "<img id='imgid" + i + "' src='" + data[i].thumbURL + "'/></a></li>");
+                }
+                //alert(myStringArray[i]);
+                //Do something
+            }
+        }
+        */
+        var switchimg = function (index) {
+            var data = myGlobalObject.JSONFromServer.value;
+            var lawaimg = document.getElementById('targetIMG');
+            lawaimg.src = data[index].imgURL;
+            //och sätta alla andra värden, rowkey
+        }
+        /*
+        var jumpToPhoto = function (hash) {
+            var element_to_scroll_to = document.getElementById('apatest');
+            element_to_scroll_to.scrollIntoView();
+        }
+        */
+        $(document).ready(function () {
+            $("#ul_debug").append("<span>ready</span><br>");
+            if (getParameterByName("hidehidden")) {
+                fetchPhotoList("$filter=hidden%20eq%20'on'&");
+            }
+            else {
+                fetchPhotoList("");
+            }
+        });
+    </script>
+<!--    <div id="divJSON" style="width: 200px; float:left;"> -->
+        <div id="divJSON" style="">
+<!--
+            <input type="button" value="XMLRequest" onclick="fetchPhotoList();" />
+            <input type="button" value="XMLRequest2" onclick="fetchPhotoList2();" />
+            <input type="button" value="scroll" onclick="jumpToPhoto();" />
+    -->
+			<ul id="ul_debug">
+			</ul>
+            <ul id="ulJSON"></ul>
+<!--            <a name="apatest" id="apatest">apatest</a> -->
+        </div>
+    <!--
+    <div id="divTarget" style="position: fixed; left: 200px;">
+        <img id="targetIMG" style="width:512px;" />
+    </div>
+    <div>
+        <form action="/update" method="post" enctype="multipart/form-data">
+            <input type="file" name="fileUploaded" />
+            <input type="submit" value="Update" />
+        </form>
+    </div>
+        -->
+</body>
+</html>

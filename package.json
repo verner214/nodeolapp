@@ -1,0 +1,19 @@
+{
+  "name": "nodeolapp",
+  "version": "1.0.0",
+  "description": "liknar photouploader men reserverad för ölappen och utan image scaling/resizing",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/verner214/nodeolapp.git"
+  },
+  "author": "lars waernulf",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/verner214/nodeolapp/issues"
+  },
+  "homepage": "https://github.com/verner214/nodeolapp"
+}
