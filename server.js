@@ -1,5 +1,5 @@
 /* node server.js
-  webbserver som till�ter uppladdning av filer till azure storage
+  webbserver som till�ter uppladdning av filer till azure storage för olapp
   dessa environment variabler m�ste s�ttas innan servern startas:
 set AZURE_STORAGE_ACCOUNT=portalvhdsgfh152bhy290k
 set AZURE_STORAGE_ACCESS_KEY=[key from azure] ---se appsettings.bat, checkas inte in i git
@@ -59,7 +59,7 @@ app.post('/update', function (req, res, next) {
 
         console.log(fields.textarea123);
         var task = {
-            PartitionKey: entGen.String(fields.partitionkey),//obligatorisk
+            PartitionKey: entGen.String(fields.partitionkey),//obligatorisk, NYTT:kan vi sätta till variabeln partitionKey egentligen
             RowKey: entGen.String(fields.rowkey),//obligatorisk
             description: entGen.String(fields.description),
             textarea: entGen.String(fields.textarea123),
@@ -72,7 +72,7 @@ app.post('/update', function (req, res, next) {
             //efter post, visa list.html        
             var fullUrl = req.protocol + '://' + req.get('host');
             console.log("url=" + fullUrl);
-            res.redirect(fullUrl + "/list.html");
+            res.redirect(fullUrl + "/list.html");//obs! NYTT,detta är vi inte intresserade av när appen anropar
         });
     });    
 });//slut update
@@ -89,7 +89,7 @@ app.post('/delete', function (req, res, next) {
 //            console.log(result['mediumName']['_']);
             var blobService = azure.createBlobService(AZURE_STORAGE_ACCOUNT, AZURE_STORAGE_ACCESS_KEY);
 
-//hittade ingen metod f�r att ta bort blob if exists
+//hittade ingen metod f�r att ta bort blob if exists, NYTT:gör inte detta för olapp, allt får finnas kvar.
             if (result['thumbName']) {
                 blobService.deleteBlob(containerName, result['thumbName']['_'], function (err, response) {
                     console.log("del blb " + result['thumbName']['_'] + ", err?=" + JSON.stringify(err));
@@ -106,10 +106,10 @@ app.post('/delete', function (req, res, next) {
                 });
             }
 
-//ta bort tabellen till sist
+//ta bort raden till sist. NYTT: sätt en flagga som säger deleted, dvs merge instället för delete.
             var entGen = azure.TableUtilities.entityGenerator;
             var task = {
-                PartitionKey: entGen.String(fields.partitionkey),//obligatorisk
+                PartitionKey: entGen.String(fields.partitionkey),//obligatorisk, sätt photos
                 RowKey: entGen.String(fields.rowkey)//obligatorisk
             };//obs! m�ste ta bort tillh�rande blobbar me.
             tableSvc.deleteEntity(tableName, task, function (error, result, response) {
@@ -121,8 +121,7 @@ app.post('/delete', function (req, res, next) {
     });
 });//slut delete
 
-app.post('/formhandler', function (req, res, next) {
-    console.log(req.body);
+app.post('/newBeer', function (req, res, next) {
     var form = new formidable.IncomingForm();
     form.uploadDir = uploadDir;       //set upload directory, Formidable uploads to operating systems tmp dir by default
     form.keepExtensions = true;     //keep file extension
@@ -131,11 +130,16 @@ app.post('/formhandler', function (req, res, next) {
 
 //debug
         console.log("form.bytesReceived");
-        console.log("file size: " + JSON.stringify(files.fileUploaded.size));
-        console.log("file path: "+JSON.stringify(files.fileUploaded.path));
-        console.log("file name: "+JSON.stringify(files.fileUploaded.name));
-        console.log("file type: "+JSON.stringify(files.fileUploaded.type));
-        console.log("lastModifiedDate: " + JSON.stringify(files.fileUploaded.lastModifiedDate));
+        console.log("file size img: " + JSON.stringify(files.img.size));
+        console.log("file path: "+JSON.stringify(files.img.path));
+        console.log("file name: "+JSON.stringify(files.img.name));
+        console.log("file type: "+JSON.stringify(files.img.type));
+        console.log("lastModifiedDate: " + JSON.stringify(files.img.lastModifiedDate));
+        console.log("file size thumb: " + JSON.stringify(files.thumb.size));
+        console.log("file path: "+JSON.stringify(files.thumb.path));
+        console.log("file name: "+JSON.stringify(files.thumb.name));
+        console.log("file type: "+JSON.stringify(files.thumb.type));
+        console.log("lastModifiedDate: " + JSON.stringify(files.thumb.lastModifiedDate));
 
 //initiera blobanv�ndning
         var blobService = azure.createBlobService(AZURE_STORAGE_ACCOUNT, AZURE_STORAGE_ACCESS_KEY);
@@ -144,43 +148,31 @@ app.post('/formhandler', function (req, res, next) {
         var saveBLOB = function (filePath, callback) {
             blobService.createBlockBlobFromLocalFile(containerName, filePath, filePath, function (err, result) {
                 if (err) return callback(err);
+                console.log('fil SPARAD till BLOB, fil=' + filePath);
                 var imgUrl = blobService.getUrl(containerName, filePath, null, hostName);
                 callback(null, { url: imgUrl, name: filePath });
             });
         }
 
-//anv�nder tufu f�r att klippa bilden samt sparar i blob
-        var saveBLOBtufu = function (filePath, width, height, callback) {
-            var img = tufu(filePath);
-            img.cutAndResize(width, height);
-            var splittad = filePath.split('.');
-            var newFilePath = uploadDir + '/' + uuid() + '.' + splittad[splittad.length - 1];
-            img.save(newFilePath, function(err) {
-                if (err) return callback(err);
-                saveBLOB(newFilePath, function(err, result) {
-                    if (err) return callback(err);
-                    fs.unlink(newFilePath, function (err) {
-                        if (err) return callback(err);
-                        callback(null, result);
-                    });
-                });
+//raderar uppladdad fil så att den inte ligger där och skräpar
+        var deleteFile = function(filepath) {
+            fs.unlink(filepath, function (err) {
+                if (err) throw err;
+                console.log('fil RADERAD efter sparad till BLOB, fil=' + filepath);
             });
-        };
+        }         
 
-//skapa 3 blobar parallellt, sen spara tabell med l�nkar till dessa 3 blobar.
+//skapa 2 blobar parallellt, sen spara tabell med l�nkar till dessa 2 blobar.
         async.parallel([
             function(callback) {
-                saveBLOB(files.fileUploaded.path, function(err, result) {
+                saveBLOB(files.img.path, function(err, result) {
+                    deleteFile(files.img.path);
                     callback(err, result);
                 });
             },
             function(callback) {
-                saveBLOBtufu(files.fileUploaded.path, 100, 100, function(err, result) {
-                    callback(err, result);
-                });
-            },
-            function(callback) {
-                saveBLOBtufu(files.fileUploaded.path, 300, 400, function(err, result) {
+                saveBLOB(files.thumb.path, function(err, result) {
+                    deleteFile(files.thumb.path);
                     callback(err, result);
                 });
             }
@@ -196,25 +188,19 @@ app.post('/formhandler', function (req, res, next) {
                 var task = {
                     PartitionKey: entGen.String(partitionKey),//obligatorisk
                     RowKey: entGen.String(uuid()),//obligatorisk
-                    description: entGen.String('h�r �r nya beskrivningen'),
+                    beerName: entGen.String('Åsens IPA'),
+                    beerStyle: entGen.String('Imperial IPA (IIPA)'),
                     imgURL: entGen.String(results[0].url),
-                    imgName: entGen.String(results[0].name),
+                    imgName: entGen.String(results[0].name),//var används detta egentligen?
                     thumbURL: entGen.String(results[1].url),
-                    thumbName: entGen.String(results[1].name),
-                    mediumURL: entGen.String(results[2].url),
-                    mediumName: entGen.String(results[2].name),
+                    thumbName: entGen.String(results[1].name),//var används detta egentligen?
                 };
 
                 tableSvc.insertEntity(tableName, task, function (err, result, response) {
                     if (err) throw err;
-                    //delete original file
-                    fs.unlink(files.fileUploaded.path, function (err) {
-                        if (err) throw err;
-                        //redirecta anropet till listan.
-                        console.log('fil raderad ' + files.fileUploaded.path + ", returnera nu");
-                        var fullUrl = req.protocol + '://' + req.get('host');
-                        res.redirect(fullUrl + "/list.html");
-                    });
+                    console.log("tabellrad sparad, returnera nu");
+                    var fullUrl = req.protocol + '://' + req.get('host');
+                    res.redirect(fullUrl + "/list.html");
                 });
             });
         });//async.parallel
@@ -223,7 +209,7 @@ app.post('/formhandler', function (req, res, next) {
 
 app.get('/sas', function (req, res) {
 	var startDate = new Date();
-	var expiryDate = new Date(startDate);//Code klagar, testa att skriva om denna rad efter test att det fungerar som det är
+	var expiryDate = new Date(startDate);//Code klagar, NYTT:testa att skriva om denna rad efter test att det fungerar som det är
 	expiryDate.setMinutes(startDate.getMinutes() + 1000000);//obs! öka gärna en nolla här!
 	startDate.setMinutes(startDate.getMinutes() - 100);
 
@@ -241,5 +227,5 @@ app.get('/sas', function (req, res) {
 	//https://portalvhdsgfh152bhy290k.table.core.windows.net/photos?st=2015-03-28T20%3A41%3A10Z&se=2015-03-29T00%3A01%3A10Z&sp=r&sv=2014-02-14&tn=photos&sig=yf8MoYRO8kAO4NF89krvZDLjLycVgOBHA%2FC%2FCIc0vV0%3D
 });
 
-//app.listen(process.env.PORT || 1337);
-app.listen(8080);
+app.listen(process.env.PORT || 1337);
+//app.listen(8080);

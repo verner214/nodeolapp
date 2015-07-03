@@ -59,7 +59,7 @@
             //signaturdelen (st=2015 fram till slutet) är skapat mha att gå till adressen /sas. koden finns i server.js.
             //jQuery.support.cors = true;
             $.ajax({//tableSAS:st=2015-03-29T18%3A35%3A25Z&se=2015-04-05T18%3A55%3A25Z&sp=r&sv=2014-02-14&tn=photos&sig=7t9DkALrw9QLsG4B%2BPUFodyDJHFCpvbwZsEfYoSuHpI%3D
-                url: "https://portalvhdsgfh152bhy290k.table.core.windows.net/photos?" + filter + "st=2015-04-02T09%3A13%3A00Z&se=2017-02-24T21%3A33%3A00Z&sp=r&sv=2014-02-14&tn=photos&sig=f8Eo%2FmE3SxQE1TstvG5memvKfmTxyMszMTOa27AQ0WQ%3D",
+                url: "https://portalvhdsgfh152bhy290k.table.core.windows.net/tblolapp?" + filter + "st=2015-04-02T09%3A13%3A00Z&se=2017-02-24T21%3A33%3A00Z&sp=r&sv=2014-02-14&tn=photos&sig=f8Eo%2FmE3SxQE1TstvG5memvKfmTxyMszMTOa27AQ0WQ%3D",
                 type: 'GET',
                 success: function (data) {
 					$("#ul_debug").append("<span>success</span><br>");
@@ -70,7 +70,7 @@
                     for (var i = 0; i < data.length; i++) {
                         if (data[i].thumbURL) {
                             $("#ulJSON").append("<li><a href='edit.html?RowKey=" + data[i].RowKey + "&PartitionKey=" + data[i].PartitionKey + "'>" +
-                                "<img id='imgid" + i + "' src='" + data[i].thumbURL + "'/></a><span> " + data[i].description +
+                                "<img id='imgid" + i + "' src='" + data[i].thumbURL + "'/></a><span> " + data[i].beerName +
                                 "</span><img src='trash.jpg' onclick='delEntry(" + i + ");' /><span id='delcnt" + i + "'></span></li>");
                         }
                     }

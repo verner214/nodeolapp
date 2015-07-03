@@ -6,9 +6,12 @@
     <title></title>
 </head>
 <body>
-    <form action="/upload" method="post" enctype="multipart/form-data">
-        <input type="file" name="fileUploaded" />
-        <input type="submit" value="Upload" />
+    <form action="/newBeer" method="post" enctype="multipart/form-data">
+        <label>thumb</label><input type="file" name="thumb" />
+        <label>img</label><input type="file" name="img" />
+        <label>beerName</label><input type="text" name="beerName" />
+        <label>beerStyle</label><input type="text" name="beerStyle" />
+        <input type="submit" value="newBeer" />
     </form>
 </body>
 </html>
