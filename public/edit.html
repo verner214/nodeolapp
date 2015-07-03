@@ -1,0 +1,92 @@
+﻿<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <link rel="stylesheet" href="own.css" type="text/css">
+    <meta charset="utf-8" />
+    <title>edit</title>
+</head>
+<body>
+    <script src="jquery-1.11.2.js"></script>
+    <script type="text/javascript">
+        function getParameterByName(name) {
+            name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
+            var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
+                results = regex.exec(location.search);
+            return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
+        }
+        
+        var fetchPhoto = function () {
+            $.support.cors = true;
+            var RowKey = getParameterByName("RowKey");//079d9bce-8542-42ee-bb55-644eeed26e78
+            var PartitionKey = getParameterByName("PartitionKey");//photos
+            //signaturdelen (st=2015 fram till slutet) är skapat mha att gå till adressen /sas. koden finns i server.js.
+            $.ajax({
+                url: "https://portalvhdsgfh152bhy290k.table.core.windows.net/tblolapp(PartitionKey='" + PartitionKey + "',RowKey='" + RowKey + "')?" +
+                    "st=2015-07-03T09%3A30%3A27Z&se=2034-07-07T21%3A50%3A27Z&sp=r&sv=2014-02-14&tn=tblolapp&sig=vaJqvHQqnZ6iVyp8k6EucjVmF4tRkEPHTAy4q2IVkVM%3D",
+                type: 'GET',
+                success: function (data) {
+					$("#ul_debug").append("<span>success</span><br>");
+                    //alert(JSON.stringify(data));
+                    document.getElementById('formRowKey').value = RowKey;
+                    document.getElementById('formPartitionKey').value = PartitionKey;
+                    if (data.beerName) {
+                        document.getElementById('formBeerName').value = data.beerName;
+                    }
+                    if (data.beerStyle) {
+                        document.getElementById('formBeerStyle').value = data.beerStyle;
+                    }
+                    if (data.sortorder) {
+                        document.getElementById('formSortOrder').value = data.sortorder;
+                    }
+                    //alert(data.mediumURL);
+                    if (data.textarea) {
+                        document.getElementById('textarea123').value = data.textarea;
+                    }
+                    if (data.visible) {//testar om attributet finns, inte om det är falskt
+                        document.getElementById('formVisible').checked = (data.visible.localeCompare('false') === 0 ? false : true);
+                    }
+                    //visa mediumURL istället för imgURL i första hand
+                    if (data.mediumURL) {
+                        $("#ul_debug").append("<span>src:" + data.mediumURL + "</span><br>");
+                        document.getElementById('targetIMG').src = data.mediumURL;
+                    }
+                    else if (data.imgURL) {
+                        $("#ul_debug").append("<span>src:" + data.imgURL + "</span><br>");
+                        document.getElementById('targetIMG').src = data.imgURL;
+                    }
+                },
+                beforeSend: function (xhr) {
+					$("#ul_debug").append("<span>beforeSend</span><br>");
+                    xhr.setRequestHeader('Accept', 'application/json;odata=nometadata');
+                },
+                error: function (rcvData) {
+                    alert(JSON.stringify(rcvData));
+                    console.log(rcvData);
+                }
+            });
+        };
+        $(document).ready(function () {
+			$("#ul_debug").append("<span>ready</span><br>");
+            fetchPhoto();
+        });
+    </script>
+	<div>
+		<ul id="ul_debug">
+		</ul>
+    </div>
+    <div>
+        <img id="targetIMG" style="max-width: 512px;"/>
+        <form action="/edit" method="post" enctype="multipart/form-data" id="myform">
+            beerName<input id="formBeerName" type="text" name="beerName" value="namn på ölen" /><br />
+            beerStyle<input id="formBeerStyle" type="text" name="beerStyle" value="öltyp" /><br />
+            sortorder<input id="formSortOrder" type="text" name="sortorder" value="name=sortorder" /><br />
+            visible<input id="formVisible" type="checkbox" name="visible" /><br />
+            <input id="formRowKey" type="hidden" name="rowkey" />
+            <input id="formPartitionKey" type="hidden" name="partitionkey" />
+            <input type="submit" value="Edit" />
+            <textarea form="myform" name="textarea123" id="textarea123" rows="10" cols="35" wrap="soft"></textarea>
+        </form>
+</div>
+</body>
+</html>

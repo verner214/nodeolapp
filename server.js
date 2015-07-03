@@ -48,7 +48,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 console.log("public=" + path.join(__dirname, 'public'));
 
 //edit.html postar hit.
-app.post('/update', function (req, res, next) {
+app.post('/edit', function (req, res, next) {
     var form = new formidable.IncomingForm();
     form.parse(req, function (err, fields, files) {
         if (err) throw err;
@@ -61,67 +61,23 @@ app.post('/update', function (req, res, next) {
         var task = {
             PartitionKey: entGen.String(fields.partitionkey),//obligatorisk, NYTT:kan vi sätta till variabeln partitionKey egentligen
             RowKey: entGen.String(fields.rowkey),//obligatorisk
-            description: entGen.String(fields.description),
+            beerName: entGen.String(fields.beerName),
+            beerStyle: entGen.String(fields.beerStyle),
             textarea: entGen.String(fields.textarea123),
 //            hidden: entGen.Boolean(fields.hidden),/*anv�nder string bara f�r att det inte ska krocka med att den var string f�rr*/
-            hidden: entGen.String(fields.hidden ? 'on' : 'false'),
+            visible: entGen.String(fields.visible ? 'true' : 'false'),
             sortorder: entGen.String(fields.sortorder),
         };
         tableSvc.mergeEntity(tableName, task, function (error, result, response) {
             if (err) throw err;
             //efter post, visa list.html        
             var fullUrl = req.protocol + '://' + req.get('host');
-            console.log("url=" + fullUrl);
             res.redirect(fullUrl + "/list.html");//obs! NYTT,detta är vi inte intresserade av när appen anropar
         });
     });    
 });//slut update
 
-app.post('/delete', function (req, res, next) {
-    var form = new formidable.IncomingForm();
-    form.parse(req, function (err, fields, files) {
-        if (err) throw err;
-
-        var tableSvc = azure.createTableService(AZURE_STORAGE_ACCOUNT, AZURE_STORAGE_ACCESS_KEY);
-
-        tableSvc.retrieveEntity(tableName, fields.partitionkey, fields.rowkey, function (err, result, response) {
-            if (err) throw err;
-//            console.log(result['mediumName']['_']);
-            var blobService = azure.createBlobService(AZURE_STORAGE_ACCOUNT, AZURE_STORAGE_ACCESS_KEY);
-
-//hittade ingen metod f�r att ta bort blob if exists, NYTT:gör inte detta för olapp, allt får finnas kvar.
-            if (result['thumbName']) {
-                blobService.deleteBlob(containerName, result['thumbName']['_'], function (err, response) {
-                    console.log("del blb " + result['thumbName']['_'] + ", err?=" + JSON.stringify(err));
-                });
-            }
-            if (result['mediumName']) {
-                blobService.deleteBlob(containerName, result['mediumName']['_'], function (err, response) {
-                    console.log("del blb " + result['mediumName']['_'] + ", err?=" + JSON.stringify(err));
-                });
-            }
-            if (result['imgName']) {
-                blobService.deleteBlob(containerName, result['imgName']['_'], function (err, response) {
-                    console.log("del blb " + result['imgName']['_'] + ", err?=" + JSON.stringify(err));
-                });
-            }
-
-//ta bort raden till sist. NYTT: sätt en flagga som säger deleted, dvs merge instället för delete.
-            var entGen = azure.TableUtilities.entityGenerator;
-            var task = {
-                PartitionKey: entGen.String(fields.partitionkey),//obligatorisk, sätt photos
-                RowKey: entGen.String(fields.rowkey)//obligatorisk
-            };//obs! m�ste ta bort tillh�rande blobbar me.
-            tableSvc.deleteEntity(tableName, task, function (error, result, response) {
-                if (err) throw err;
-                var fullUrl = req.protocol + '://' + req.get('host');
-                res.redirect(fullUrl + "/list.html");
-            });
-        });
-    });
-});//slut delete
-
-app.post('/newBeer', function (req, res, next) {
+app.post('/new', function (req, res, next) {
     var form = new formidable.IncomingForm();
     form.uploadDir = uploadDir;       //set upload directory, Formidable uploads to operating systems tmp dir by default
     form.keepExtensions = true;     //keep file extension
@@ -188,12 +144,13 @@ app.post('/newBeer', function (req, res, next) {
                 var task = {
                     PartitionKey: entGen.String(partitionKey),//obligatorisk
                     RowKey: entGen.String(uuid()),//obligatorisk
-                    beerName: entGen.String('Åsens IPA'),
-                    beerStyle: entGen.String('Imperial IPA (IIPA)'),
+                    beerName: entGen.String(fields.beerName),
+                    beerStyle: entGen.String(fields.beerStyle),
                     imgURL: entGen.String(results[0].url),
                     imgName: entGen.String(results[0].name),//var används detta egentligen?
                     thumbURL: entGen.String(results[1].url),
-                    thumbName: entGen.String(results[1].name),//var används detta egentligen?
+                    thumbName: entGen.String(results[1].name),//var används detta egentligen? för debug kan vara bra.
+                    visible: entGen.String('true'),
                 };
 
                 tableSvc.insertEntity(tableName, task, function (err, result, response) {
@@ -209,8 +166,8 @@ app.post('/newBeer', function (req, res, next) {
 
 app.get('/sas', function (req, res) {
 	var startDate = new Date();
-	var expiryDate = new Date(startDate);//Code klagar, NYTT:testa att skriva om denna rad efter test att det fungerar som det är
-	expiryDate.setMinutes(startDate.getMinutes() + 1000000);//obs! öka gärna en nolla här!
+	var expiryDate = new Date();//Code klagar, NYTT:testa att skriva om denna rad efter test att det fungerar som det är
+	expiryDate.setMinutes(startDate.getMinutes() + 10000000);//obs! öka gärna en nolla här!
 	startDate.setMinutes(startDate.getMinutes() - 100);
 
 	var sharedAccessPolicy = {
