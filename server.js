@@ -156,8 +156,9 @@ app.post('/new', function (req, res, next) {
                 tableSvc.insertEntity(tableName, task, function (err, result, response) {
                     if (err) throw err;
                     console.log("tabellrad sparad, returnera nu");
-                    var fullUrl = req.protocol + '://' + req.get('host');
-                    res.redirect(fullUrl + "/list.html");
+                    //var fullUrl = req.protocol + '://' + req.get('host');
+                    //res.redirect(fullUrl + "/list.html");
+                    res.send('OK');
                 });
             });
         });//async.parallel
