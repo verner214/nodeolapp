@@ -71,8 +71,9 @@ app.post('/edit', function (req, res, next) {
         tableSvc.mergeEntity(tableName, task, function (error, result, response) {
             if (err) throw err;
             //efter post, visa list.html        
-            var fullUrl = req.protocol + '://' + req.get('host');
-            res.redirect(fullUrl + "/list.html");//obs! NYTT,detta är vi inte intresserade av när appen anropar
+            //var fullUrl = req.protocol + '://' + req.get('host');
+            //res.redirect(fullUrl + "/list.html");//obs! NYTT,detta är vi inte intresserade av när appen anropar
+            res.send('OK');
         });
     });    
 });//slut update
@@ -165,8 +166,9 @@ app.post('/new', function (req, res, next) {
                 tableSvc.insertEntity(tableName, task, function (err, result, response) {
                     if (err) throw err;
                     console.log("tabellrad sparad, returnera nu");
-                    var fullUrl = req.protocol + '://' + req.get('host');
-                    res.redirect(fullUrl + "/list.html");
+                    //var fullUrl = req.protocol + '://' + req.get('host');
+                    //res.redirect(fullUrl + "/list.html");
+                    res.send('OK');
                 });
             });
         });//async.parallel
