@@ -146,6 +146,15 @@ app.post('/new', function (req, res, next) {
                     RowKey: entGen.String(uuid()),//obligatorisk
                     beerName: entGen.String(fields.beerName),
                     beerStyle: entGen.String(fields.beerStyle),
+                    og: entGen.String(fields.og),
+                    fg: entGen.String(fields.fg),
+                    description: entGen.String(fields.description),
+                    recipe: entGen.String(fields.recipe),
+                    comments: entGen.String(fields.comments),
+                    brewingDate: entGen.String(fields.brewingDate),
+                    people: entGen.String(fields.people),
+                    place: entGen.String(fields.place),
+                    hide: entGen.String(fields.hide),
                     imgURL: entGen.String(results[0].url),
                     imgName: entGen.String(results[0].name),//var används detta egentligen?
                     thumbURL: entGen.String(results[1].url),
