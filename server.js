@@ -33,6 +33,7 @@ app.use(bodyParser.urlencoded({
 //app.use(bodyParser({ defer: true }));
 
 //l�gg uppladdade filer i speciella mappar, som skapas h�r.
+/*
 var uploadDir = "upload";
 var thumbPrefix = "t_";
 var thumbDir = thumbPrefix + uploadDir;
@@ -42,7 +43,7 @@ if (!fs.existsSync(uploadDir)) {
 if (!fs.existsSync(thumbDir)) {
     fs.mkdirSync(thumbDir);
 }
-
+*/
 //statiska html-filer ligger i public/
 app.use(express.static(path.join(__dirname, 'public')));
 console.log("public=" + path.join(__dirname, 'public'));
@@ -173,7 +174,120 @@ app.post('/new', function (req, res, next) {
             });
         });//async.parallel
     });//form.parse
-});//app.post('/upload'
+});//app.post('/new'
+
+//sparar images om det finns
+var saveImages = function(files, callback) {
+    if (files.img === null || files.img === undefined) {
+        return callback(null, null);
+    }
+//initiera blobanv�ndning
+    var blobService = azure.createBlobService(AZURE_STORAGE_ACCOUNT, AZURE_STORAGE_ACCESS_KEY);
+
+//sparar en BLOB som ligger p� disk. callback(err, url) meddelas urlen som bloben fick.
+    var saveBLOB = function (filePath, callback) {
+        blobService.createBlockBlobFromLocalFile(containerName, filePath, filePath, function (err, result) {
+            if (err) return callback(err);
+            console.log('fil SPARAD till BLOB, fil=' + filePath);
+            var imgUrl = blobService.getUrl(containerName, filePath, null, hostName);
+            callback(null, { url: imgUrl, name: filePath });
+        });
+    }
+
+//raderar uppladdad fil så att den inte ligger där och skräpar
+    var deleteFile = function(filepath) {
+        fs.unlink(filepath, function (err) {
+            if (err) throw err;
+            console.log('fil RADERAD efter sparad till BLOB, fil=' + filepath);
+        });
+    }         
+
+//skapa 2 blobar parallellt, sen spara tabell med l�nkar till dessa 2 blobar.
+    async.parallel([
+        function(callback) {
+            saveBLOB(files.img.path, function(err, result) {
+                deleteFile(files.img.path);
+                callback(err, result);
+            });
+        },
+        function(callback) {
+            saveBLOB(files.thumb.path, function(err, result) {
+                deleteFile(files.thumb.path);
+                callback(err, result);
+            });
+        }
+    ], function (err, results) {
+        if (err) throw err;
+        //save table
+        console.log('blobar sparade.');
+        callback({url : results[0].url, name : results[0].name}, {url : results[1].url, name : results[1].name});
+    });//parallell
+}//saveImages
+
+//ska ersätta new och edit
+app.post('/newedit', function (req, res, next) {
+    var form = new formidable.IncomingForm();
+    form.uploadDir = uploadDir;       //set upload directory, Formidable uploads to operating systems tmp dir by default
+    form.keepExtensions = true;     //keep file extension
+
+    form.parse(req, function(err, fields, files) {
+
+//debug
+        console.log("newedit, id = "  + fields.id);
+        
+        var bNew = fields.id === null || fields.id === undefined; 
+        var rowId = bNew ? String(uuid()) : fields.id;
+
+//nytt: spara ev. bilder till blob, hantera skapade urler
+        saveImages(files, function(img, thumb) {
+            var tableSvc = azure.createTableService(AZURE_STORAGE_ACCOUNT, AZURE_STORAGE_ACCESS_KEY);
+            tableSvc.createTableIfNotExists(tableName, function (err, result, response) {
+                if (err) throw err;
+                var entGen = azure.TableUtilities.entityGenerator;
+                var task = {
+                    PartitionKey: entGen.String(partitionKey),//obligatorisk
+                    RowKey: entGen.String(rowId),//obligatorisk
+                    beerName: entGen.String(fields.beerName),
+                    beerStyle: entGen.String(fields.beerStyle),
+                    og: entGen.String(fields.og),
+                    fg: entGen.String(fields.fg),
+                    description: entGen.String(fields.description),
+                    recipe: entGen.String(fields.recipe),
+                    comments: entGen.String(fields.comments),
+                    brewingDate: entGen.String(fields.brewingDate),
+                    people: entGen.String(fields.people),
+                    place: entGen.String(fields.place),
+                    hide: entGen.String(fields.hide),
+                    visible: entGen.String('true')
+                };
+                if (img !== null) {
+                    task.imgURL = entGen.String(img.url);
+                    task.imgName = entGen.String(img.name);
+                    task.thumbURL = entGen.String(thumb.url);
+                    task.thumbName = entGen.String(thumb.name);
+                }
+                if (bNew) {
+                    tableSvc.insertEntity(tableName, task, function (err, result, response) {
+                        if (err) throw err;
+                        console.log("insert");
+                        //var fullUrl = req.protocol + '://' + req.get('host');
+                        //res.redirect(fullUrl + "/list.html");
+                        res.send('OK');
+                    });
+                } else {
+                    tableSvc.mergeEntity(tableName, task, function (error, result, response) {
+                        if (err) throw err;
+                        console.log("update");
+                        //efter post, visa list.html        
+                        //var fullUrl = req.protocol + '://' + req.get('host');
+                        //res.redirect(fullUrl + "/list.html");//obs! NYTT,detta är vi inte intresserade av när appen anropar
+                        res.send('OK');
+                    });
+                }//else
+            });//tableSvc.createTableIfNotExists
+        });//saveImages
+    });//form.parse
+});//app.post('/newedit'
 
 app.get('/sas', function (req, res) {
 	var startDate = new Date();
