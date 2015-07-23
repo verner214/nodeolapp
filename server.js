@@ -33,8 +33,9 @@ app.use(bodyParser.urlencoded({
 //app.use(bodyParser({ defer: true }));
 
 //l�gg uppladdade filer i speciella mappar, som skapas h�r.
-/*
+
 var uploadDir = "upload";
+/*
 var thumbPrefix = "t_";
 var thumbDir = thumbPrefix + uploadDir;
 if (!fs.existsSync(uploadDir)) {
@@ -235,7 +236,7 @@ app.post('/newedit', function (req, res, next) {
 //debug
         console.log("newedit, id = "  + fields.id);
         
-        var bNew = fields.id === null || fields.id === undefined; 
+        var bNew = fields.id === null || fields.id === undefined || fields.id === ""; 
         var rowId = bNew ? String(uuid()) : fields.id;
 
 //nytt: spara ev. bilder till blob, hantera skapade urler
