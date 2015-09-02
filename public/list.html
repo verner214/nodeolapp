@@ -62,14 +62,14 @@
                 }
             });
         };
-
+/* kommenterar bort, verkar inte användas
         var switchimg = function (index) {
             var data = myGlobalObject.JSONFromServer.value;
             var lawaimg = document.getElementById('targetIMG');
             lawaimg.src = data[index].imgURL;
             //och sätta alla andra värden, rowkey
         }
-
+*/
         $(document).ready(function () {
             $("#ul_debug").append("<span>ready</span><br>");
             if (getParameterByName("hidehidden")) {
