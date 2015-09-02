@@ -39,9 +39,14 @@
                     if (data.sortorder) {
                         document.getElementById('formSortOrder').value = data.sortorder;
                     }
-                    //alert(data.mediumURL);
-                    if (data.textarea) {
-                        document.getElementById('textarea123').value = data.textarea;
+                    if (data.description) {
+                        document.getElementById('formDescription').value = data.description;
+                    }
+                    if (data.recipe) {
+                        document.getElementById('formRecipe').value = data.recipe;
+                    }
+                    if (data.comments) {
+                        document.getElementById('formComments').value = data.comments;
                     }
                     if (data.visible) {//testar om attributet finns, inte om det är falskt
                         document.getElementById('formVisible').checked = (data.visible.localeCompare('false') === 0 ? false : true);
@@ -85,7 +90,9 @@
             <input id="formRowKey" type="hidden" name="id" />
             <input id="formPartitionKey" type="hidden" name="partitionkey" />
             <input type="submit" value="Edit" />
-            <textarea form="myform" name="textarea123" id="textarea123" rows="10" cols="35" wrap="soft"></textarea>
+            description<textarea form="myform" name="description" id="formDescription" rows="10" cols="35" wrap="soft"></textarea>
+            recipe<textarea form="myform" name="recipe" id="formRecipe" rows="10" cols="35" wrap="soft"></textarea>
+            comments<textarea form="myform" name="comments" id="formComments" rows="10" cols="35" wrap="soft"></textarea>
         </form>
 </div>
 </body>
