@@ -120,7 +120,7 @@ app.post('/newedit', function (req, res, next) {
                     people: entGen.String(fields.people),
                     place: entGen.String(fields.place),
                     hide: entGen.String(fields.hide),
-                    visible: entGen.String('true')
+                    visible: entGen.String('true')//används?
                 };
                 if (img !== null) {
                     task.imgURL = entGen.String(img.url);
@@ -137,7 +137,7 @@ app.post('/newedit', function (req, res, next) {
                         res.send('OK');
                     });
                 } else {
-                    tableSvc.mergeEntity(tableName, task, function (error, result, response) {
+                    tableSvc.mergeEntity(tableName, task, function (err, result, response) {
                         if (err) throw err;
                         console.log("update");
                         //efter post, visa list.html        
@@ -150,6 +150,46 @@ app.post('/newedit', function (req, res, next) {
         });//saveImages
     });//form.parse
 });//app.post('/newedit'
+
+//galleryedit, param: id (rowid), url, text (optional), hide (optional) 
+//gallerynew, param: id (rowid), thumb, img, text (optional) 
+app.post('/gallerynew', function (req, res, next) {
+    var form = new formidable.IncomingForm();
+    form.uploadDir = uploadDir;       //set upload directory, Formidable uploads to operating systems tmp dir by default
+    form.keepExtensions = true;     //keep file extension
+
+    form.parse(req, function(err, fields, files) {
+        if (err) throw err;
+        console.log("gallerynew, id = "  + fields.id);
+        
+//nytt: spara ev. bilder till blob, hantera skapade urler
+        saveImages(files, function(img, thumb) {
+            var tableSvc = azure.createTableService(AZURE_STORAGE_ACCOUNT, AZURE_STORAGE_ACCESS_KEY);
+            tableSvc.retrieveEntity(tableName, partitionKey, fields.id, function(err, result, response) {
+                if (err) throw err;
+                var galleryArr = [];
+                if (result["gallery"] !== undefined) {
+                    galleryArr = JSON.parse(result["gallery"]["_"]);
+                }
+                var galleryItem = {imgURL: img.url, thumbURL: thumb.url, text: fields.text, hide: false};
+                galleryArr.push(galleryItem);
+                
+//merga med existing row                
+                var entGen = azure.TableUtilities.entityGenerator;
+                var task = {
+                    PartitionKey: entGen.String(partitionKey),
+                    RowKey: entGen.String(fields.id),
+                    gallery: entGen.String(JSON.stringify(galleryArr))
+                };                
+                tableSvc.mergeEntity(tableName, task, function (err, result, response) {
+                    if (err) throw err;
+                    console.log("mergeEntity");
+                    res.send('OK');
+                });
+            });//tableSvc.retrieveEntity
+        });//saveImages
+    });//form.parse
+});//app.post('/gallerynew'
 
 app.get('/sas', function (req, res) {
 	var startDate = new Date();
