@@ -60,6 +60,26 @@
                         $("#ul_debug").append("<span>src:" + data.imgURL + "</span><br>");
                         document.getElementById('targetIMG').src = data.imgURL;
                     }
+
+//gallery                    
+                    if (data[i].gallery) {
+                        var galleryArr = JSON.parse(data[i].gallery);
+                        for (var i = 0; i < galleryArr.length; i++) {
+                            var bgc = galleryArr.hide === "true" ? "red" : "green";
+                            var checked = galleryArr.hide === "true" ? "checked" : "";
+                            $("#ul_gallery").append(
+                                "<li style='background: " + bgc + " '>"+
+                                    "<img id='imgid" + i + "' src='" + galleryArr.imgURL + "'/><br />"+
+                                    "<form action='/galleryedit' method='post' enctype='multipart/form-data'>"+
+                                        "<textarea name='text' rows='20' cols='70' wrap='soft'>" + galleryArr.text + "</textarea><br />"+
+                                        "<input type='checkbox' name='hide' rows='20' cols='70' wrap='soft' " + checked + "></input><br />"+
+                                        "<input type='hidden' name='id'>" + data[i].RowKey + "</input>"+
+                                        "<input type='hidden' name='imgURL'>" + galleryArr.imgURL + "</input>"+
+                                        "<input type='submit'/>"+
+                                    "</form>"+
+                                "</li>");
+                        }
+                    }                    
                 },
                 beforeSend: function (xhr) {
 					$("#ul_debug").append("<span>beforeSend</span><br>");
@@ -94,6 +114,10 @@
             recipe<br /><textarea form="myform" name="recipe" id="formRecipe" rows="20" cols="70" wrap="soft"></textarea><br />
             comments<br /><textarea form="myform" name="comments" id="formComments" rows="20" cols="70" wrap="soft"></textarea><br />
         </form>
+</div>
+<div>
+    <ul id="ul_gallery">
+    </ul>
 </div>
 </body>
 </html>

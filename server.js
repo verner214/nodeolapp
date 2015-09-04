@@ -151,7 +151,6 @@ app.post('/newedit', function (req, res, next) {
     });//form.parse
 });//app.post('/newedit'
 
-//galleryedit, param: id (rowid), url, text (optional), hide (optional) 
 //gallerynew, param: id (rowid), thumb, img, text (optional) 
 app.post('/gallerynew', function (req, res, next) {
     var form = new formidable.IncomingForm();
@@ -188,6 +187,45 @@ app.post('/gallerynew', function (req, res, next) {
                 });
             });//tableSvc.retrieveEntity
         });//saveImages
+    });//form.parse
+});//app.post('/gallerynew'
+
+//galleryedit, param: id (rowid), imgURL (för identifiering), text (optional), hide (optional) 
+app.post('/galleryedit', function (req, res, next) {
+    var form = new formidable.IncomingForm();
+    form.uploadDir = uploadDir;       //set upload directory, Formidable uploads to operating systems tmp dir by default
+    form.keepExtensions = true;     //keep file extension
+
+    form.parse(req, function(err, fields, files) {
+        if (err) throw err;
+        console.log("galleryedit, id = "  + fields.id);
+        
+//hämta brygd
+        var tableSvc = azure.createTableService(AZURE_STORAGE_ACCOUNT, AZURE_STORAGE_ACCESS_KEY);
+        tableSvc.retrieveEntity(tableName, partitionKey, fields.id, function(err, result, response) {
+            if (err) throw err;
+            var galleryArr = JSON.parse(result["gallery"]["_"]);
+            //var galleryItem = {imgURL: img.url, thumbURL: thumb.url, text: fields.text, hide: false};
+            for (var n = 0; n < galleryArr.length; n++) {
+                if (fields.imgURL == galleryArr[n].imgURL) {
+                    galleryArr[n].hide = (fields.hide == "true" || fields.hide == "on") ? "true" : "false";
+                    galleryArr[n].text = fields.text;
+                }
+            }
+                
+//merga med existing row                
+            var entGen = azure.TableUtilities.entityGenerator;
+            var task = {
+                PartitionKey: entGen.String(partitionKey),
+                RowKey: entGen.String(fields.id),
+                gallery: entGen.String(JSON.stringify(galleryArr))
+            };                
+            tableSvc.mergeEntity(tableName, task, function (err, result, response) {
+                if (err) throw err;
+                console.log("mergeEntity");
+                res.send('OK');
+            });
+        });//tableSvc.retrieveEntity
     });//form.parse
 });//app.post('/gallerynew'
 
