@@ -62,10 +62,10 @@
                     }
 
 //gallery                    
-                    if (data[i].gallery) {
+                    if (data.gallery) {
                         alert('gallery finns!');
-                        var galleryArr = JSON.parse(data[i].gallery);
-                        alert(data[i].gallery);
+                        var galleryArr = JSON.parse(data.gallery);
+                        alert(data.gallery);
                         for (var i = 0; i < galleryArr.length; i++) {
                             var bgc = galleryArr.hide === "true" ? "red" : "green";
                             var checked = galleryArr.hide === "true" ? "checked" : "";
