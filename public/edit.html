@@ -75,7 +75,7 @@
                                     "<form action='/galleryedit' method='post' enctype='multipart/form-data'>"+
                                         "<textarea name='text' rows='20' cols='70' wrap='soft'>" + galleryArr[i].text + "</textarea><br />"+
                                         "<input type='checkbox' name='hide' rows='20' cols='70' wrap='soft' " + checked + "><br />"+
-                                        "<input type='hidden' name='id'>" + RowKey + ""+
+                                        "<input type='hidden' name='id' value='" + RowKey + "'>"+
                                         "<input type='hidden' name='imgURL' value='" + galleryArr[i].imgURL + "'>" +
                                         "<input type='submit'/>"+
                                     "</form>"+
