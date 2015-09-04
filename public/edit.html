@@ -19,6 +19,7 @@
         var fetchPhoto = function () {
             $.support.cors = true;
             var RowKey = getParameterByName("RowKey");//079d9bce-8542-42ee-bb55-644eeed26e78
+            document.getElementById('gallerynew_id').value = RowKey;            
             var PartitionKey = getParameterByName("PartitionKey");//photos
             //signaturdelen (st=2015 fram till slutet) är skapat mha att gå till adressen /sas. koden finns i server.js.
             $.ajax({
@@ -120,6 +121,13 @@
 <div>
     <ul id="ul_gallery">
     </ul>
+    <form action="/gallerynew" method="post" enctype="multipart/form-data">
+        <input type="hidden" name="id" id="gallerynew_id">
+        <textarea name="text" rows='20' cols='70' wrap='soft'></textarea><br />
+        <label>thumb</label><input type="file" name="thumb" /><br>
+        <label>img</label><input type="file" name="img" /><br>
+        <input type="submit" value="newGalleryItem" /><br>
+    </form>
 </div>
 </body>
 </html>
