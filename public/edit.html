@@ -67,16 +67,16 @@
                         var galleryArr = JSON.parse(data.gallery);
                         alert(data.gallery);
                         for (var i = 0; i < galleryArr.length; i++) {
-                            var bgc = galleryArr.hide === "true" ? "red" : "green";
-                            var checked = galleryArr.hide === "true" ? "checked" : "";
+                            var bgc = galleryArr[i].hide === "true" ? "red" : "green";
+                            var checked = galleryArr[i].hide === "true" ? "checked" : "";
                             $("#ul_gallery").append(
                                 "<li style='background: " + bgc + " '>"+
-                                    "<img id='imgid" + i + "' src='" + galleryArr.imgURL + "'/><br />"+
+                                    "<img id='imgid" + i + "' src='" + galleryArr[i].imgURL + "'/><br />"+
                                     "<form action='/galleryedit' method='post' enctype='multipart/form-data'>"+
-                                        "<textarea name='text' rows='20' cols='70' wrap='soft'>" + galleryArr.text + "</textarea><br />"+
+                                        "<textarea name='text' rows='20' cols='70' wrap='soft'>" + galleryArr[i].text + "</textarea><br />"+
                                         "<input type='checkbox' name='hide' rows='20' cols='70' wrap='soft' " + checked + "></input><br />"+
                                         "<input type='hidden' name='id'>" + data.RowKey + "</input>"+
-                                        "<input type='hidden' name='imgURL'>" + galleryArr.imgURL + "</input>"+
+                                        "<input type='hidden' name='imgURL'>" + galleryArr[i].imgURL + "</input>"+
                                         "<input type='submit'/>"+
                                     "</form>"+
                                 "</li>");
