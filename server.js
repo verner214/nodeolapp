@@ -88,8 +88,11 @@ var saveImages = function(files, callback) {
 
 //gör både new och edit
 app.post('/newedit', function (req, res, next) {
+    console.log("newedit, enter");
     var form = new formidable.IncomingForm();
+    console.log("newedit, enter2");
     form.uploadDir = uploadDir;       //set upload directory, Formidable uploads to operating systems tmp dir by default
+    console.log("newedit, enter3");
     form.keepExtensions = true;     //keep file extension
 
     form.parse(req, function(err, fields, files) {
