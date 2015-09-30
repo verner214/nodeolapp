@@ -19,7 +19,10 @@ var async = require("async");
 
 var app = express();
 var containerName = "cntolapp";
-var tableName = "tblolapp";
+//var tableName = "tblolapp";
+var tblOlapp = "tblolapp";
+var tblDemo = "tbldemo";
+//var tableNameDemo = "tblolappdemo";
 var AZURE_STORAGE_ACCOUNT = "portalvhdsgfh152bhy290k";
 var AZURE_STORAGE_ACCESS_KEY = process.env.AZURE_STORAGE_ACCESS_KEY;
 var hostName = "https://" + AZURE_STORAGE_ACCOUNT + ".blob.core.windows.net";
@@ -96,6 +99,7 @@ app.post('/newedit', function (req, res, next) {
     form.keepExtensions = true;     //keep file extension
 
     form.parse(req, function(err, fields, files) {
+        var tableName = (fields.demo === undefined || fields.demo.localCompare("false") === 0) ? tblOlapp : tblDemo;
 
 //debug
         console.log("newedit, id = "  + fields.id);
@@ -161,6 +165,8 @@ app.post('/gallerynew', function (req, res, next) {
     form.keepExtensions = true;     //keep file extension
 
     form.parse(req, function(err, fields, files) {
+        var tableName = (fields.demo === undefined || fields.demo.localCompare("false") === 0) ? tblOlapp : tblDemo;
+        
         if (err) throw err;
         console.log("gallerynew, id = "  + fields.id);
         
@@ -200,6 +206,8 @@ app.post('/galleryedit', function (req, res, next) {
     form.keepExtensions = true;     //keep file extension
 
     form.parse(req, function(err, fields, files) {
+        var tableName = (fields.demo === undefined || fields.demo.localCompare("false") === 0) ? tblOlapp : tblDemo;
+        
         if (err) throw err;
         console.log("galleryedit, id = "  + fields.id);
         
@@ -246,8 +254,10 @@ app.get('/sas', function (req, res) {
 		},
 	};
 	var tableSvc = azure.createTableService(AZURE_STORAGE_ACCOUNT, AZURE_STORAGE_ACCESS_KEY);
-	var tableSAS = tableSvc.generateSharedAccessSignature(tableName, sharedAccessPolicy);
+	var tableSAS = tableSvc.generateSharedAccessSignature(tblOlapp, sharedAccessPolicy);
 	var html = "<b>SAS</b>" + tableSAS + "<br>" + "<b>host</b><br>" + JSON.stringify(tableSvc.host) + "<br>";
+	tableSAS = tableSvc.generateSharedAccessSignature(tblDemo, sharedAccessPolicy);
+	html += "<b>SAS-demo</b>" + tableSAS + "<br>" + "<b>host</b><br>" + JSON.stringify(tableSvc.host) + "<br>";
 	res.send(html);
 	//https://portalvhdsgfh152bhy290k.table.core.windows.net/photos?st=2015-03-28T20%3A41%3A10Z&se=2015-03-29T00%3A01%3A10Z&sp=r&sv=2014-02-14&tn=photos&sig=yf8MoYRO8kAO4NF89krvZDLjLycVgOBHA%2FC%2FCIc0vV0%3D
 });
