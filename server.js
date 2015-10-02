@@ -240,6 +240,24 @@ app.post('/galleryedit', function (req, res, next) {
     });//form.parse
 });//app.post('/gallerynew'
 
+//för att kopiera enstaka rad till demotabellen (azure-explorer kan ta bort rader men inte kopiera)
+app.post('/copy2demo', function (req, res, next) {
+    console.log("copy2demo, enter");
+    var form = new formidable.IncomingForm();
+
+    form.parse(req, function(err, fields, files) {
+        var tableSvc = azure.createTableService(AZURE_STORAGE_ACCOUNT, AZURE_STORAGE_ACCESS_KEY);
+        tableSvc.retrieveEntity(tblOlapp, partitionKey, fields.id, function(err, result, response) {
+            if (err) throw err;
+            tableSvc.insertEntity(tblDemo, result, function (err, result2, response) {
+                if (err) throw err;
+                console.log("insert till demo gjord");
+                res.send('OK');
+            });
+        });//tableSvc.retrieveEntity
+    });//form.parse
+});//copy2demo
+
 //log vid fel och appstart
 app.post('/lognew', function (req, res, next) {
     console.log("lognew, enter");

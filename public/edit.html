@@ -20,6 +20,7 @@
             $.support.cors = true;
             var RowKey = getParameterByName("RowKey");//079d9bce-8542-42ee-bb55-644eeed26e78
             document.getElementById('gallerynew_id').value = RowKey;            
+            document.getElementById('copy2demo_id').value = RowKey;                        
             var PartitionKey = getParameterByName("PartitionKey");//photos
             //signaturdelen (st=2015 fram till slutet) är skapat mha att gå till adressen /sas. koden finns i server.js.
             $.ajax({
@@ -127,6 +128,10 @@
         <label>thumb</label><input type="file" name="thumb" /><br>
         <label>img</label><input type="file" name="img" /><br>
         <input type="submit" value="newGalleryItem" /><br>
+    </form>
+    <form action="/copy2demo" method="post" enctype="multipart/form-data">
+        <input type="hidden" name="id" id="copy2demo_id">
+        <input type="submit" value="copy2demo" /><br>
     </form>
 </div>
 </body>
