@@ -165,7 +165,7 @@ app.post('/gallerynew', function (req, res, next) {
     form.keepExtensions = true;     //keep file extension
 
     form.parse(req, function(err, fields, files) {
-        var tableName = (fields.demo === undefined || fields.demo.localCompare("false") === 0) ? tblOlapp : tblDemo;
+        var tableName = (fields.demo === undefined || fields.demo.localeCompare("false") === 0) ? tblOlapp : tblDemo;
         
         if (err) throw err;
         console.log("gallerynew, id = "  + fields.id);
