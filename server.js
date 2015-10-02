@@ -240,6 +240,32 @@ app.post('/galleryedit', function (req, res, next) {
     });//form.parse
 });//app.post('/gallerynew'
 
+//log vid fel och appstart
+app.post('/lognew', function (req, res, next) {
+    console.log("lognew, enter");
+    var form = new formidable.IncomingForm();
+    var logTableName = "lawalogtable";
+    console.log("lognew, enter2");
+
+    form.parse(req, function(err, fields, files) {
+        var tableSvc = azure.createTableService(AZURE_STORAGE_ACCOUNT, AZURE_STORAGE_ACCESS_KEY);
+        tableSvc.createTableIfNotExists(logTableName, function (err, result, response) {
+            var entGen = azure.TableUtilities.entityGenerator;
+            var task = {
+                PartitionKey: entGen.String(partitionKey),//obligatorisk
+                RowKey: entGen.String(uuid()),//obligatorisk
+                device: entGen.String(fields.device),
+                error: entGen.String(fields.error)
+            };
+            tableSvc.insertEntity(logTableName, task, function (err, result, response) {
+                if (err) throw err;
+                console.log("insert");
+                res.send('OK');
+            });
+        });//tableSvc.createTableIfNotExists
+    });//form.parse
+});//lognew
+
 app.get('/sas', function (req, res) {
 	var startDate = new Date();
 	var expiryDate = new Date();//Code klagar, NYTT:testa att skriva om denna rad efter test att det fungerar som det är
