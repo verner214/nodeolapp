@@ -260,18 +260,17 @@ app.post('/copy2demo', function (req, res, next) {
 
 //kopiera allt till demo om inte ölnamnet börjar på zzz
 //
-app.post('/resetDemo', function (req, res, next) {
+app.get('/resetDemo', function (req, res) {
     console.log("resetDemo, enter");
     var form = new formidable.IncomingForm();
     var query = new azure.TableQuery();
 
-    form.parse(req, function(err, fields, files) {
-        var tableSvc = azure.createTableService(AZURE_STORAGE_ACCOUNT, AZURE_STORAGE_ACCESS_KEY);
-        tableSvc.queryEntities('mytable',new azure.TableQuery(), null, function(error, result, response) {
-            if (!error) {
-                res.send('OK');
-            }
-        });
+    var tableSvc = azure.createTableService(AZURE_STORAGE_ACCOUNT, AZURE_STORAGE_ACCESS_KEY);
+    tableSvc.queryEntities(tblDemo,new azure.TableQuery(), null, function(error, result, response) {
+        if (!error) {
+            res.send('OK');
+        }
+    });
 /*        
         tableSvc.retrieveEntity(tblOlapp, partitionKey, fields.id, function(err, result, response) {
             if (err) throw err;
@@ -282,11 +281,10 @@ app.post('/resetDemo', function (req, res, next) {
             });
         });//tableSvc.retrieveEntity
         */
-    });//form.parse
 });//resetDemo
 
 //log vid fel och appstart
-app.get('/lognew', function (req, res) {
+app.post('/lognew', function (req, res, next) {
     console.log("lognew, enter");
     var form = new formidable.IncomingForm();
     var logTableName = "lawalogtable";
