@@ -258,6 +258,33 @@ app.post('/copy2demo', function (req, res, next) {
     });//form.parse
 });//copy2demo
 
+//kopiera allt till demo om inte ölnamnet börjar på zzz
+//
+app.post('/resetDemo', function (req, res, next) {
+    console.log("resetDemo, enter");
+    var form = new formidable.IncomingForm();
+    var query = new azure.TableQuery();
+
+    form.parse(req, function(err, fields, files) {
+        var tableSvc = azure.createTableService(AZURE_STORAGE_ACCOUNT, AZURE_STORAGE_ACCESS_KEY);
+        tableSvc.queryEntities('mytable',new azure.TableQuery(), null, function(error, result, response) {
+            if (!error) {
+                res.send('OK');
+            }
+        });
+/*        
+        tableSvc.retrieveEntity(tblOlapp, partitionKey, fields.id, function(err, result, response) {
+            if (err) throw err;
+            tableSvc.insertEntity(tblDemo, result, function (err, result2, response) {
+                if (err) throw err;
+                console.log("insert till demo gjord");
+                res.send('OK');
+            });
+        });//tableSvc.retrieveEntity
+        */
+    });//form.parse
+});//resetDemo
+
 //log vid fel och appstart
 app.post('/lognew', function (req, res, next) {
     console.log("lognew, enter");
