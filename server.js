@@ -262,26 +262,21 @@ app.post('/copy2demo', function (req, res, next) {
 //
 app.get('/resetDemo', function (req, res) {
     console.log("resetDemo, enter");
-    var form = new formidable.IncomingForm();
-    var query = new azure.TableQuery();
-
     var tableSvc = azure.createTableService(AZURE_STORAGE_ACCOUNT, AZURE_STORAGE_ACCESS_KEY);
-    tableSvc.queryEntities(tblDemo,new azure.TableQuery(), null, function(error, result, response) {
-        if (!error) {
-            res.send("ok" + result.entries[0].RowKey._);
-            
-        }
-    });
-/*        
-        tableSvc.retrieveEntity(tblOlapp, partitionKey, fields.id, function(err, result, response) {
+    tableSvc.deleteTable(tblDemo, function(err, response){
+        if (err) throw err;
+        tableSvc.createTableIfNotExists(tblDemo, function(err, result, response){
             if (err) throw err;
-            tableSvc.insertEntity(tblDemo, result, function (err, result2, response) {
+            tableSvc.queryEntities(tblOlapp, new azure.TableQuery(), null, function(err, result, response) {
                 if (err) throw err;
-                console.log("insert till demo gjord");
-                res.send('OK');
+                tableSvc.insertEntity(tblDemo, result.enities[0], function (err, result2, response) {
+                    if (err) throw err;
+                    console.log("insert till demo gjord");
+                    res.send('OK');
+                });
             });
-        });//tableSvc.retrieveEntity
-        */
+        });
+    });    
 });//resetDemo
 
 //log vid fel och appstart
