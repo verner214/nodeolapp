@@ -263,22 +263,29 @@ app.post('/copy2demo', function (req, res, next) {
 app.get('/resetDemo', function (req, res) {
     console.log("resetDemo, enter");
     var tableSvc = azure.createTableService(AZURE_STORAGE_ACCOUNT, AZURE_STORAGE_ACCESS_KEY);
-    tableSvc.deleteTable(tblDemo, function(err, response){
+    tableSvc.queryEntities(tblDemo, new azure.TableQuery(), null, function(err, result, response) {
         if (err) throw err;
-        tableSvc.createTableIfNotExists(tblDemo, function(err, result, response){
-            if (err) throw err;
-            tableSvc.queryEntities(tblOlapp, new azure.TableQuery(), null, function(err, result, response) {
+        async.each(result.entities, function (entity, callback) {
+            tableSvc.deleteEntity(tblDemo, entity, function(error, response) {
                 if (err) throw err;
-                tableSvc.insertEntity(tblDemo, result.enities[0], function (err, result2, response) {
+                callback();
+            }, function (err) {
+                tableSvc.queryEntities(tblOlapp, new azure.TableQuery(), null, function(err, result, response) {
                     if (err) throw err;
-                    console.log("insert till demo gjord");
-                    res.send('OK');
-                });
+                    async.each(result.entities, function (entity, callback) {
+                        tableSvc.insertEntity(tblDemo, entity, function (err, result, response) {
+                            if (err) throw err;
+                            callback();
+                        }, function (err) {
+                            res.send('OK');
+                        });
+                    });//each
+                });//queryEntities
             });
-        });
-    });    
+        });//each
+    });//queryEntities
 });//resetDemo
-
+    
 //log vid fel och appstart
 app.post('/lognew', function (req, res, next) {
     console.log("lognew, enter");
