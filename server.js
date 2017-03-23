@@ -263,27 +263,29 @@ app.post('/copy2demo', function (req, res, next) {
 app.get('/resetDemo', function (req, res) {
     console.log("resetDemo, enter");
     var tableSvc = azure.createTableService(AZURE_STORAGE_ACCOUNT, AZURE_STORAGE_ACCESS_KEY);
-    tableSvc.queryEntities(tblDemo, new azure.TableQuery(), null, function(err, result, response) {
+    tableSvc.createTableIfNotExists(tblDemo, function (err, result, response) {
         if (err) throw err;
-        async.each(result.entities, function (entity, callback) {
-            tableSvc.deleteEntity(tblDemo, entity, function(error, response) {
-                if (err) throw err;
-                callback();
-            }, function (err) {
-                tableSvc.queryEntities(tblOlapp, new azure.TableQuery(), null, function(err, result, response) {
+        tableSvc.queryEntities(tblDemo, new azure.TableQuery(), null, function(err, result, response) {
+            if (err) throw err;
+            async.each(result.entities, function (entity, callback) {
+                tableSvc.deleteEntity(tblDemo, entity, function(error, response) {
                     if (err) throw err;
-                    async.each(result.entities, function (entity, callback) {
-                        tableSvc.insertEntity(tblDemo, entity, function (err, result, response) {
-                            if (err) throw err;
-                            callback();
-                        }, function (err) {
-                            res.send('OK');
-                        });
-                    });//each
-                });//queryEntities
-            });
-        });//each
-    });//queryEntities
+                    callback();
+                }, function (err) {
+                    tableSvc.queryEntities(tblOlapp, new azure.TableQuery(), null, function(err, result, response) {
+                        if (err) throw err;
+                        async.each(result.entities, function (entity, callback) {
+                            tableSvc.insertEntity(tblDemo, entity, function (err, result, response) {
+                                if (err) throw err;
+                                callback();
+                            }, function (err) {
+                                res.send('OK');
+                            });
+                        });//each
+                    });//queryEntities
+                });
+            });//each
+        });//queryEntities
 });//resetDemo
     
 //log vid fel och appstart
