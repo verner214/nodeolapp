@@ -286,7 +286,7 @@ app.post('/resetDemo', function (req, res, next) {
 });//resetDemo
 
 //log vid fel och appstart
-app.post('/lognew', function (req, res, next) {
+app.get('/lognew', function (req, res) {
     console.log("lognew, enter");
     var form = new formidable.IncomingForm();
     var logTableName = "lawalogtable";
