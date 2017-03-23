@@ -268,7 +268,7 @@ app.get('/resetDemo', function (req, res) {
     var tableSvc = azure.createTableService(AZURE_STORAGE_ACCOUNT, AZURE_STORAGE_ACCESS_KEY);
     tableSvc.queryEntities(tblDemo,new azure.TableQuery(), null, function(error, result, response) {
         if (!error) {
-            res.send(result.entries.length);
+            res.send("ok" + result.entries.length);
         }
     });
 /*        
