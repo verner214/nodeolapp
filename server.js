@@ -286,6 +286,7 @@ app.get('/resetDemo', function (req, res) {
                 });
             });//each
         });//queryEntities
+    });
 });//resetDemo
     
 //log vid fel och appstart
