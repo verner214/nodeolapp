@@ -267,18 +267,23 @@ app.get('/resetDemo', function (req, res) {
         if (err) throw err;
         tableSvc.queryEntities(tblDemo, new azure.TableQuery(), null, function(err, result, response) {
             if (err) throw err;
+            console.log("resetDemo, entities = " + result.entities);
             async.each(result.entities, function (entity, callback) {
-                tableSvc.deleteEntity(tblDemo, entity, function(error, response) {
+                tableSvc.deleteEntity(tblDemo, entity, function(err, response) {
                     if (err) throw err;
                     callback();
+                });
                 }, function (err) {
+                    if (err) throw err;
                     tableSvc.queryEntities(tblOlapp, new azure.TableQuery(), null, function(err, result, response) {
                         if (err) throw err;
                         async.each(result.entities, function (entity, callback) {
                             tableSvc.insertEntity(tblDemo, entity, function (err, result, response) {
                                 if (err) throw err;
                                 callback();
+                            });
                             }, function (err) {
+                                if (err) throw err;
                                 res.send('OK');
                             });
                         });//each
