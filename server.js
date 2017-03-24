@@ -285,10 +285,8 @@ app.get('/resetDemo', function (req, res) {
                             }, function (err) {
                                 if (err) throw err;
                                 res.send('OK');
-                            });
                         });//each
                     });//queryEntities
-                });
             });//each
         });//queryEntities
     });
