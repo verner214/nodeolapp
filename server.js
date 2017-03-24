@@ -267,7 +267,7 @@ app.get('/resetDemo', function (req, res) {
         if (err) throw err;
         tableSvc.queryEntities(tblDemo, new azure.TableQuery(), null, function(err, result, response) {
             if (err) throw err;
-            console.log("resetDemo: result, result.entities = " + result + ":" + result.entities);
+            console.log("resetDemo: result, result.entities = " + result + ":" + result.entities + ":" + response.body);
             async.each(result.entities, function (entity, callback) {
                 tableSvc.deleteEntity(tblDemo, entity, function(err, response) {
                     if (err) throw err;
