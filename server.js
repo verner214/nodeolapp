@@ -279,7 +279,7 @@ app.get('/resetDemo', function (req, res) {
                         if (err) throw err;
                         async.each(result.entries, function (entity, callback) {
                             if(typeof entity.beerName != "undefined") {
-                                console.log("resetDemo: entity, entity.beerName = " + entity.beerName._ + ":" + entity.beerName);
+                                console.log("resetDemo: entity, entity.beerName = " + entity.beerName._ + ":" + entity.beerName + ":" + entity.beerName._.substring(0, 2).localeCompare("zz"));
                             }
                             callback();//tabortmigsen
                             /*
