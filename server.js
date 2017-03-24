@@ -278,6 +278,9 @@ app.get('/resetDemo', function (req, res) {
                     tableSvc.queryEntities(tblOlapp, new azure.TableQuery(), null, function(err, result, response) {
                         if (err) throw err;
                         async.each(result.entries, function (entity, callback) {
+                            console.log("resetDemo: entity, entity.beerName = " + entity + ":" + entity.beerName);
+                            callback();//tabortmigsen
+                            /*
                             if (entity.beerName._.substring(0, 2).localeCompare("zz") === 0) {
                                 tableSvc.insertEntity(tblDemo, entity, function (err, result, response) {
                                     if (err) throw err;
@@ -286,6 +289,7 @@ app.get('/resetDemo', function (req, res) {
                             } else {
                                 callback();
                             }
+                            */
                             }, function (err) {
                                 if (err) throw err;
                                 res.send('OK');
