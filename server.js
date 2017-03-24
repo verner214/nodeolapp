@@ -278,7 +278,9 @@ app.get('/resetDemo', function (req, res) {
                     tableSvc.queryEntities(tblOlapp, new azure.TableQuery(), null, function(err, result, response) {
                         if (err) throw err;
                         async.each(result.entries, function (entity, callback) {
-                            console.log("resetDemo: entity, entity.beerName = " + entity + ":" + entity.beerName);
+                            if(typeof entity.beerName != "undefined") {
+                                console.log("resetDemo: entity, entity.beerName = " + entity.beerName._ + ":" + entity.beerName);
+                            }
                             callback();//tabortmigsen
                             /*
                             if (entity.beerName._.substring(0, 2).localeCompare("zz") === 0) {
