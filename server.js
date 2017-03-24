@@ -267,8 +267,8 @@ app.get('/resetDemo', function (req, res) {
         if (err) throw err;
         tableSvc.queryEntities(tblDemo, new azure.TableQuery(), null, function(err, result, response) {
             if (err) throw err;
-            console.log("resetDemo: result, result.entities = " + result + ":" + result.entities + ":" + response.body);
-            async.each(result.entities, function (entity, callback) {
+            console.log("resetDemo: result, result.entities = " + result + ":" + result.entries.length + ":" + response.body);
+            async.each(result.entries, function (entity, callback) {
                 tableSvc.deleteEntity(tblDemo, entity, function(err, response) {
                     if (err) throw err;
                     callback();
@@ -277,7 +277,7 @@ app.get('/resetDemo', function (req, res) {
                     if (err) throw err;
                     tableSvc.queryEntities(tblOlapp, new azure.TableQuery(), null, function(err, result, response) {
                         if (err) throw err;
-                        async.each(result.entities, function (entity, callback) {
+                        async.each(result.entries, function (entity, callback) {
                             tableSvc.insertEntity(tblDemo, entity, function (err, result, response) {
                                 if (err) throw err;
                                 callback();
